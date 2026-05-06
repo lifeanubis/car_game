@@ -10,6 +10,8 @@ import './App.css';
 import { useRef, useEffect } from 'react';
 import CarScene from './scenes/car_scene';
 import ColissionScene from './scenes/colission_scene';
+import Controlls from './scenes/controlls';
+// import { Lilita_One } from ""
 
 function RoadSegment({ initialZ, textureRoad, myMesh }) {
   const rotationSpeed = 0.1;
@@ -154,6 +156,8 @@ function App() {
         { name: 'ArrowDown', keys: ['ArrowDown'] },
       ]}
     >
+      <Controlls />
+
       <div
         style={{
           width: '100vw',

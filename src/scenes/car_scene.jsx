@@ -19,6 +19,9 @@ import {
   ObsticlesHaha,
   ObsticlesTruck,
 } from './obsticles_scene';
+import { useDispatch, useSelector } from 'react-redux';
+import Controlls from './controlls';
+
 // import * as THREE from 'three';
 
 function Vehicle({ vehicleRotation = 0 }) {
@@ -153,7 +156,7 @@ function RoadSegment({
   setSpeedUp,
 }) {
   const rotationFactor = 0.1;
-  const vehicleSpeed = 2;
+  const vehicleSpeed = 0.1;
   const rotationState = useRef({ y: 0 });
   const prevKeysRef = useRef({ ArrowLeft: false, ArrowRight: false });
 
@@ -271,44 +274,51 @@ function CarScene() {
   const [vehicleStartSound, setVehicleStartSound] = useState(false);
   const [speedUp, setSpeedUp] = useState(false);
 
-  return (
-    <KeyboardControls
-      map={[
-        { name: 'ArrowLeft', keys: ['ArrowLeft'] },
-        { name: 'ArrowRight', keys: ['ArrowRight'] },
-        { name: 'ArrowUp', keys: ['ArrowUp'] },
-        { name: 'ArrowDown', keys: ['ArrowDown'] },
-      ]}
-    >
-      {/* <ClickSound />
-      <Speaker /> */}
-      <CarStartSound
-        vehicleStartSound={vehicleStartSound}
-        setVehicleStartSound={setVehicleStartSound}
-      />
-      <Physics gravity={[0, 0, 0]}>
-        <ambientLight intensity={1.5} />
-        <ObsticlesHaha />
-        <ObsticlesTruck />
-        <ObsticlesBouncing />
+  const { isGameStarted } = useSelector((state) => state.game);
+  const dispatch = useDispatch();
 
-        <directionalLight position={[5, 10, 5]} intensity={1.5} />
-        <pointLight position={[0, 5, 10]} intensity={1} />
-        <Vehicle
+  console.log(isGameStarted);
+
+  return (
+    <>
+      <KeyboardControls
+        map={[
+          { name: 'ArrowLeft', keys: ['ArrowLeft'] },
+          { name: 'ArrowRight', keys: ['ArrowRight'] },
+          { name: 'ArrowUp', keys: ['ArrowUp'] },
+          { name: 'ArrowDown', keys: ['ArrowDown'] },
+        ]}
+      >
+        {/* <ClickSound />
+      <Speaker /> */}
+        <CarStartSound
+          vehicleStartSound={vehicleStartSound}
+          setVehicleStartSound={setVehicleStartSound}
+        />
+        <Physics gravity={[0, 0, 0]}>
+          <ambientLight intensity={1.5} />
+          {/* <ObsticlesHaha />
+        <ObsticlesTruck />
+        <ObsticlesBouncing /> */}
+
+          <directionalLight position={[5, 10, 5]} intensity={1.5} />
+          <pointLight position={[0, 5, 10]} intensity={1} />
+          {/* <Vehicle
           vehicleStartSound={vehicleStartSound}
           setVehicleStartSound={setVehicleStartSound}
           vehicleRotation={vehicleRotation}
-        />
-        <VehicleOuter vehicleRotation={vehicleRotation} />
+        /> */}
+          <VehicleOuter vehicleRotation={vehicleRotation} />
 
-        {/* <OrbitControls /> */}
+          {/* <OrbitControls /> */}
 
-        <Roads
-          setVehicleRotation={setVehicleRotation}
-          vehicleRotation={vehicleRotation}
-        />
-      </Physics>
-    </KeyboardControls>
+          <Roads
+            setVehicleRotation={setVehicleRotation}
+            vehicleRotation={vehicleRotation}
+          />
+        </Physics>
+      </KeyboardControls>
+    </>
   );
 }
 
