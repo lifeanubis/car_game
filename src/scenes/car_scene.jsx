@@ -33,15 +33,6 @@ function Vehicle({ vehicleRotation = 0 }) {
 
   camera.position.set(vehicleXPosition, -2.62, 6);
 
-  // function CarStartSound({ vehicleStartSound, setVehicleStartSound }) {
-  //   //
-  //   return (
-  //     <mesh position={[0, 0, 0]}>
-  //       {/* <boxGeometry />
-  //     <meshStandardMaterial color="hotpink" /> */}
-  //     </mesh>
-  //   );
-  // }
   return (
     <>
       <primitive
@@ -156,7 +147,7 @@ function RoadSegment({
   setSpeedUp,
 }) {
   const rotationFactor = 0.1;
-  const vehicleSpeed = 0.1;
+  const vehicleSpeed = 1;
   const rotationState = useRef({ y: 0 });
   const prevKeysRef = useRef({ ArrowLeft: false, ArrowRight: false });
 
@@ -274,10 +265,14 @@ function CarScene() {
   const [vehicleStartSound, setVehicleStartSound] = useState(false);
   const [speedUp, setSpeedUp] = useState(false);
 
-  const { isGameStarted } = useSelector((state) => state.game);
+  const { isGameStarted, audio } = useSelector((state) => state.game);
   const dispatch = useDispatch();
 
-  console.log(isGameStarted);
+  // const audioHandler = () => {};
+
+  // useEffect(() => {
+
+  // }, []);
 
   return (
     <>
@@ -291,23 +286,22 @@ function CarScene() {
       >
         {/* <ClickSound />
       <Speaker /> */}
-        <CarStartSound
-          vehicleStartSound={vehicleStartSound}
-          setVehicleStartSound={setVehicleStartSound}
-        />
+
         <Physics gravity={[0, 0, 0]}>
           <ambientLight intensity={1.5} />
-          {/* <ObsticlesHaha />
-        <ObsticlesTruck />
-        <ObsticlesBouncing /> */}
 
           <directionalLight position={[5, 10, 5]} intensity={1.5} />
           <pointLight position={[0, 5, 10]} intensity={1} />
-          {/* <Vehicle
-          vehicleStartSound={vehicleStartSound}
-          setVehicleStartSound={setVehicleStartSound}
-          vehicleRotation={vehicleRotation}
-        /> */}
+
+          {audio && <ObsticlesHaha />}
+          {audio && <ObsticlesTruck />}
+          {audio && <ObsticlesBouncing />}
+
+          <Vehicle
+            vehicleStartSound={vehicleStartSound}
+            setVehicleStartSound={setVehicleStartSound}
+            vehicleRotation={vehicleRotation}
+          />
           <VehicleOuter vehicleRotation={vehicleRotation} />
 
           {/* <OrbitControls /> */}

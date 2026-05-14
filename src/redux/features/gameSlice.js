@@ -5,6 +5,7 @@ const initialState = {
   lives: 3,
   isGameStarted: false,
   isGameOver: false,
+  audio: false,
 };
 
 const gameSlice = createSlice({
@@ -20,6 +21,9 @@ const gameSlice = createSlice({
     addScore: (state, action) => {
       state.score += action.payload ?? 1;
     },
+    startAudio: (state, action) => {
+      state.audio = action.payload ?? false;
+    },
     loseLife: (state) => {
       state.lives -= 1;
 
@@ -32,7 +36,7 @@ const gameSlice = createSlice({
   },
 });
 
-export const { startGame, addScore, loseLife, resetGame } = gameSlice.actions;
+export const { startGame, addScore, loseLife, resetGame, startAudio } =
+  gameSlice.actions;
 
 export default gameSlice.reducer;
-

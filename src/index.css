@@ -110,66 +110,97 @@ code {
   background: var(--code-bg);
 }
 .controlls-contianer {
-  /* background-color: red; */
   position: absolute;
   cursor: pointer;
-  z-index: 999;
+  /* z-index: 50; */
+  /* background-color: #0a3848; */
+  width: 100vw;
+  display: flex;
+  align-items: center;
 }
 
-.steering-container > img {
-  display: block;
-  position: static;
-  transition: transform 1s ease;
-  transform-origin: center;
+.controlls-contianer img {
+  transition: all 1s ease;
 }
 
-.steering-container:hover > img {
+.controlls-contianer:hover img {
+  /* background-color: red; */
   transform: rotate(360deg);
 }
 
 .scroll-info {
-  background-color: rgba(81, 195, 134, 0.5);
-  color: rgb(5, 1, 48);
-  display: flex;
-  width: 0rem;
-  justify-content: space-between;
+  background-color: #c0e8f8;
   position: absolute;
-  overflow: hidden;
-  transition-duration: 500ms;
-  font-size: 15px;
   padding: 10px;
-  left: -1.5rem;
-  top: 1rem;
-  height: 2.5rem;
+  left: -100%;
+  overflow: hidden;
+  transform: scaleX(1);
+  transform-origin: right;
+  transition: all 1s ease 0.5s;
+  display: flex;
+  justify-content: space-between;
+  width: 70vw;
+  height: 5rem;
+  align-items: center;
+  color: #ff6090;
 }
 
-#photo::before {
+.scroll-info li {
+  list-style: none;
+}
+
+.controlls-contianer:hover .scroll-info {
+  left: 20%;
+  transition: all 0.3s ease;
+  transform: scaleX(1);
+}
+
+.scroll-info::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-color: rgba(213, 29, 198, 0.5);
+  background-color: #061828;
   transform: scaleX(0);
   transform-origin: left;
-  transition: all 0.8s ease;
-  z-index: 0;
+  transition: transform 0.8s ease 0.5s;
+  /* z-index: 0; */
 }
 
-.steering-container:hover + #photo::before {
+.controlls-contianer:hover .scroll-info::before {
   transform: scaleX(1);
 }
-.steering-container:hover + #photo {
-  width: 70vw;
-  transition-duration: 500ms;
-  left: 5.5rem;
-}
 
-#photo:hover {
-  width: 70vw;
-  transition-duration: 500ms;
-  left: 5.5rem;
-}
-
-#photo > * {
+.scroll-info > * {
   position: relative;
   z-index: 1;
+}
+
+.start-screen {
+  position: fixed;
+  inset: 0;
+  background-color: #061828;
+  background-image: url('https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHB1bW1nbXR0cTFnZWM5OGRoc2xxazVmdGtqbDV6NGc4eDF4ZnZ1NCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/CQTBID8suI3AhRXJ4H/giphy.gif');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  z-index: 1;
+}
+.start-screen-content {
+  background-color: #322d4d;
+  display: grid;
+  z-index: 10;
+}
+.start-screen-content > * {
+  padding: 1.5rem;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    transform 0.3s ease;
+}
+
+.start-screen-content > *:hover {
+  background-color: #1b4c5a;
 }

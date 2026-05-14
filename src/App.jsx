@@ -9,8 +9,12 @@ import gsap from 'gsap';
 import './App.css';
 import { useRef, useEffect } from 'react';
 import CarScene from './scenes/car_scene';
+import StartScene from './scenes/start_scene';
+
 import ColissionScene from './scenes/colission_scene';
 import Controlls from './scenes/controlls';
+import { useSelector } from 'react-redux';
+import { useAppDispatch } from './redux/hooks';
 // import { Lilita_One } from ""
 
 function RoadSegment({ initialZ, textureRoad, myMesh }) {
@@ -145,7 +149,13 @@ function Wall({ wallMeshRef }) {
 }
 
 function App() {
-  const wallMeshRef = useRef();
+  const { isGameStarted, score, audio } = useSelector((state) => state.game);
+
+  // useEffect(() => {
+  //   console.log(audio, 'audio');
+  // }, [audio]);
+
+  const dispatch = useAppDispatch();
 
   return (
     <KeyboardControls
@@ -168,15 +178,18 @@ function App() {
           backgroundRepeat: 'no-repeat',
         }}
       >
-        <Canvas style={{ background: 'transparent' }}>
-          <ambientLight intensity={10} />
-          <pointLight position={[0, -1, 0]} intensity={10} />
-          {/* <Wall wallMeshRef={wallMeshRef} /> */}
-          <CarScene />
-          {/* <ColissionScene /> */}
-
-          {/* <Roads /> */}
-        </Canvas>
+        {!isGameStarted && (
+          <div>
+            <StartScene />
+          </div>
+        )}
+        {isGameStarted && (
+          <Canvas style={{ background: 'transparent' }}>
+            <ambientLight intensity={10} />
+            <pointLight position={[0, -1, 0]} intensity={10} />
+            <CarScene />
+          </Canvas>
+        )}
       </div>
     </KeyboardControls>
   );

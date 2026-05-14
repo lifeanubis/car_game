@@ -14,9 +14,8 @@ const Controlls = () => {
       {
         // backgroundColor: 'blue', // background-color
         // fontSize: 12, // font-size
-        duration: 5,
-        ease: 'power3.out',
-
+        // duration: 5,
+        // ease: 'power3.out',
         // boxShadow: '0px 0px 20px 20px red', // animate complex strings
         // borderRadius: '50% 50%',
         // height: 'auto', // animate between auto and a px value 🪄
@@ -45,11 +44,10 @@ const Controlls = () => {
         <img src="/wheel.png" alt="Controlls" width={100} height={100} />
       </div>
       <div id="photo" className="scroll-info">
-        <li>asddasdasd</li>
-
-        {/* <li>asdasdasd</li>
-        <li>asdzxczx fasdfasd</li>
-        <li>asd zsasdasd</li> */}
+        <li>score</li>
+        <li>about ME</li>
+        <li>portfolio </li>
+        {/* <li>asd </li> */}
       </div>
     </div>
   );
