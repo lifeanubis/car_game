@@ -8,6 +8,7 @@ import {
   useTexture,
   useGLTF,
   PositionalAudio,
+  CameraShake,
 } from '@react-three/drei';
 import gsap from 'gsap';
 // import './ App.css';
@@ -21,6 +22,7 @@ import {
 } from './obsticles_scene';
 import { useDispatch, useSelector } from 'react-redux';
 import Controlls from './controlls';
+import sadAudio from '../../public/sad.mp3';
 
 // import * as THREE from 'three';
 
@@ -36,75 +38,24 @@ function Vehicle({ vehicleRotation = 0 }) {
   return (
     <>
       <primitive
-        onClick={() => sound.current.play()}
+        // onClick={() => sound.current.play()}
         object={scene}
         position={[vehicleXPosition, -3.05, 5.8]}
         scale={[40, 40, 40]}
         rotation={[0, Math.PI, vehicleRotation]}
       />
-      <PositionalAudio
+      {/* <PositionalAudio
         loop={false}
         ref={sound}
         url="/carstart.mp3"
         setVolume={() => 0.9}
         distance={50}
-      />
+      /> */}
     </>
   );
 }
 
 // obsticles
-
-function Obsticles({}) {
-  const sound = useRef();
-  const lastHitTime = useRef(0);
-
-  const [ref, api] = useSphere(() => ({
-    mass: 0.1,
-    args: [0.2],
-    position: [0, -3, -15],
-    linearDamping: 0.01,
-    angularDamping: 0.01,
-    onCollide: () => {
-      const now = Date.now();
-
-      if (now - lastHitTime.current < 500) {
-        return;
-      }
-
-      lastHitTime.current = now;
-      sound.current?.play();
-    },
-  }));
-
-  useEffect(() => {
-    const unsubscribe = api.position.subscribe((position) => {
-      // api.collisionResponse = true; // Enable collision response for the obst
-      if (position[2] > 15) {
-        api.position.set(0, -3, -15);
-      }
-    });
-    return unsubscribe;
-  }, [api]);
-
-  useFrame(() => {
-    // Apply constant forward velocity
-    api.velocity.set(0, 0, 15);
-  });
-
-  return (
-    <>
-      <mesh
-        ref={ref}
-        // castShadow receiveShadow
-      >
-        <sphereGeometry args={[0.2, 32, 32]} />
-        <meshPhongMaterial color={'blue'} />
-      </mesh>
-      <PositionalAudio ref={sound} url="/haha.mp3" loop={false} distance={50} />
-    </>
-  );
-}
 
 function VehicleOuter({ vehicleRotation }) {
   const vehicleXPosition = vehicleRotation * 50 + 0.15;
@@ -265,14 +216,19 @@ function CarScene() {
   const [vehicleStartSound, setVehicleStartSound] = useState(false);
   const [speedUp, setSpeedUp] = useState(false);
 
-  const { isGameStarted, audio } = useSelector((state) => state.game);
+  const { isGameStarted, audio, lives } = useSelector((state) => state.game);
   const dispatch = useDispatch();
 
-  // const audioHandler = () => {};
+  const playSadAudio = () => {
+    const sadAudioPlay = new Audio(sadAudio);
+    sadAudioPlay.play();
+  };
 
-  // useEffect(() => {
-
-  // }, []);
+  useEffect(() => {
+    if (lives <= 0) {
+      playSadAudio();
+    }
+  }, [lives]);
 
   return (
     <>
@@ -284,28 +240,24 @@ function CarScene() {
           { name: 'ArrowDown', keys: ['ArrowDown'] },
         ]}
       >
-        {/* <ClickSound />
-      <Speaker /> */}
-
         <Physics gravity={[0, 0, 0]}>
-          <ambientLight intensity={1.5} />
-
-          <directionalLight position={[5, 10, 5]} intensity={1.5} />
-          <pointLight position={[0, 5, 10]} intensity={1} />
-
-          {audio && <ObsticlesHaha />}
-          {audio && <ObsticlesTruck />}
-          {audio && <ObsticlesBouncing />}
-
+          {/* <ambientLight intensity={1.5} /> */}
+          {/* <directionalLight position={[5, 10, 5]} intensity={1.5} /> */}
+          {/* <pointLight position={[0, 5, 10]} intensity={1} /> */}
+          {lives > 0 && (
+            <>
+              <ObsticlesHaha />
+              <ObsticlesTruck />
+              <ObsticlesBouncing />
+            </>
+          )}
           <Vehicle
             vehicleStartSound={vehicleStartSound}
             setVehicleStartSound={setVehicleStartSound}
             vehicleRotation={vehicleRotation}
           />
           <VehicleOuter vehicleRotation={vehicleRotation} />
-
           {/* <OrbitControls /> */}
-
           <Roads
             setVehicleRotation={setVehicleRotation}
             vehicleRotation={vehicleRotation}

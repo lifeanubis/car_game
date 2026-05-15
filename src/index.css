@@ -122,7 +122,10 @@ code {
 .controlls-contianer img {
   transition: all 1s ease;
 }
-
+.steering-container {
+  display: flex;
+  flex-direction: column;
+}
 .controlls-contianer:hover img {
   /* background-color: red; */
   transform: rotate(360deg);
@@ -149,6 +152,16 @@ code {
   list-style: none;
 }
 
+.scroll-info a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.scroll-info > *:hover a {
+  color: greenyellow;
+  transition: color 0.2s ease;
+}
+
 .controlls-contianer:hover .scroll-info {
   left: 20%;
   transition: all 0.3s ease;
@@ -163,7 +176,6 @@ code {
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.8s ease 0.5s;
-  /* z-index: 0; */
 }
 
 .controlls-contianer:hover .scroll-info::before {
@@ -186,12 +198,16 @@ code {
   justify-content: center;
   display: flex;
   align-items: center;
-  z-index: 1;
+  /* z-index: 1; */
 }
+.start-screen-off {
+  display: none;
+}
+
 .start-screen-content {
   background-color: #322d4d;
   display: grid;
-  z-index: 10;
+  /* z-index: 10; */
 }
 .start-screen-content > * {
   padding: 1.5rem;

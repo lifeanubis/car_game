@@ -10,15 +10,6 @@ const StartScene = () => {
   const [sound, setSound] = useState(false);
   const { isGameStarted, score, audio } = useSelector((state) => state.game);
 
-  const soundHandle = () => {
-    return (
-      <CarStartSound
-      // vehicleStartSound={vehicleStartSound}
-      // setVehicleStartSound={setVehicleStartSound}
-      />
-    );
-  };
-
   const playCarStartSound = () => {
     const audioCarStart = new Audio(carStartAudio);
     const audioCarRunning = new Audio(carRunningAudio);
@@ -30,21 +21,17 @@ const StartScene = () => {
     }, 2000);
   };
 
-  useEffect(() => {
-    soundHandle();
-    // console.log(audio, 'audio');
-  }, [audio]);
-
   const dispatch = useAppDispatch();
-  const sounda = useRef();
 
   return (
-    <div className="start-screen">
+    <div
+      className={`${isGameStarted ? 'start-screen-off' : 'start-screen'}`}
+      // style={{ display:  }}
+    >
       <div className="start-screen-content">
         <div
           onClick={() => {
             dispatch(startAudio(true));
-            soundHandle();
             playCarStartSound();
           }}
         >

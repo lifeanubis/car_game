@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   score: 0,
-  lives: 3,
+  lives: 30,
   isGameStarted: false,
   isGameOver: false,
   audio: false,
@@ -16,7 +16,7 @@ const gameSlice = createSlice({
       state.isGameStarted = true;
       state.isGameOver = false;
       state.score = 0;
-      state.lives = 3;
+      state.lives = 30;
     },
     addScore: (state, action) => {
       state.score += action.payload ?? 1;
