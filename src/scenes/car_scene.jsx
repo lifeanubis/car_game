@@ -9,11 +9,11 @@ import {
   useGLTF,
   PositionalAudio,
   CameraShake,
+  Loader,
 } from '@react-three/drei';
 import gsap from 'gsap';
 // import './ App.css';
 import { useRef, useEffect, useState } from 'react';
-import { sub } from 'three/tsl';
 import { CarStartSound, ClickSound, Speaker } from './soundDemo_scene';
 import {
   ObsticlesBouncing,
@@ -27,10 +27,9 @@ import sadAudio from '../../public/sad.mp3';
 // import * as THREE from 'three';
 
 function Vehicle({ vehicleRotation = 0 }) {
-  const { scene } = useGLTF('/rubicon/scene.gltf');
+  const { scene, nodes, materials } = useGLTF('/rubicon/scene.gltf');
   const { camera } = useThree();
 
-  const sound = useRef();
   const vehicleXPosition = vehicleRotation * 50 + 0.15;
 
   camera.position.set(vehicleXPosition, -2.62, 6);
@@ -38,7 +37,6 @@ function Vehicle({ vehicleRotation = 0 }) {
   return (
     <>
       <primitive
-        // onClick={() => sound.current.play()}
         object={scene}
         position={[vehicleXPosition, -3.05, 5.8]}
         scale={[40, 40, 40]}
@@ -241,9 +239,6 @@ function CarScene() {
         ]}
       >
         <Physics gravity={[0, 0, 0]}>
-          {/* <ambientLight intensity={1.5} /> */}
-          {/* <directionalLight position={[5, 10, 5]} intensity={1.5} /> */}
-          {/* <pointLight position={[0, 5, 10]} intensity={1} /> */}
           {lives > 0 && (
             <>
               <ObsticlesHaha />

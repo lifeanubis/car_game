@@ -9,10 +9,11 @@ import {
   Cloud,
   Sparkles,
   CameraShake,
+  Loader,
 } from '@react-three/drei';
 import gsap from 'gsap';
 import './App.css';
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, Suspense } from 'react';
 import CarScene from './scenes/car_scene';
 import StartScene from './scenes/start_scene';
 
