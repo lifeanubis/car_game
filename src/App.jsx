@@ -21,7 +21,6 @@ import ColissionScene from './scenes/colission_scene';
 import Controlls from './scenes/controlls';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from './redux/hooks';
-import GyroMotionScene from './scenes/gyro_motion';
 // import { Lilita_One } from ""
 
 function RoadSegment({ initialZ, textureRoad, myMesh }) {
@@ -180,7 +179,70 @@ function App() {
         { name: 'ArrowDown', keys: ['ArrowDown'] },
       ]}
     >
-      <GyroMotionScene />
+      {isGameStarted && (
+        <div
+          style={{
+            zIndex: 10,
+          }}
+        >
+          <Controlls />
+        </div>
+      )}
+      {!isGameStarted && (
+        <div>
+          <StartScene />
+        </div>
+      )}
+      {isGameStarted && (
+        <div
+          style={{
+            position: 'relative',
+            width: '100vw',
+            height: '100vh',
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              backgroundImage: 'url(/roadFull.jpg)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              opacity: backImage ? 1 : 0,
+              transition: 'opacity 1.2s ease-in-out',
+              pointerEvents: 'none',
+            }}
+          />
+          <Canvas
+            style={{
+              position: 'relative',
+              zIndex: 1,
+              background: 'transparent',
+            }}
+          >
+            <Stars depth={5} />
+            <Sparkles
+              scale={[20, 2, 5]}
+              color={'#70e5ff'}
+              position={[0, 1, 0]}
+              size={5}
+              speed={0.2}
+            />
+            <Cloud
+              color={'purple'}
+              count={1}
+              fade={50}
+              volume={5}
+              opacity={0.3}
+            />
+            <ambientLight intensity={10} />
+            <pointLight position={[0, -1, 0]} intensity={10} />
+            <CarScene />
+          </Canvas>
+        </div>
+      )}
     </KeyboardControls>
   );
 }
