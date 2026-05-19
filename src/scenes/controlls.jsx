@@ -1,14 +1,11 @@
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useAppSelector } from '../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { startAudio, startGame } from '../redux/features/gameSlice';
 
 const Controlls = () => {
   //   gsap.registerPlugin(useGSAP); // register the hook to avoid React version discrepancies
-  const { lives } = useAppSelector((state) => state.game);
-  // useEffect(() => {
-  //   first();
-  // }, []);
+  const { lives, audio } = useAppSelector((state) => state.game);
+  const dispatch = useAppDispatch();
+
   return (
     <div>
       <div className="controlls-contianer">
@@ -54,7 +51,12 @@ const Controlls = () => {
         <div className={lives <= 0 ? 'game-over' : 'game-on'}>
           <h2>game over</h2>
         </div>
-        <button className={lives <= 0 ? 'restart-btn' : 'restart-btn-off'}>
+        <button
+          onClick={() => {
+            window.location.reload();
+          }}
+          className={lives <= 0 ? 'restart-btn' : 'restart-btn-off'}
+        >
           <h2>restart</h2>
         </button>
       </div>

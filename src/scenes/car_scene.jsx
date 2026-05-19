@@ -14,7 +14,7 @@ import {
 import gsap from 'gsap';
 // import './ App.css';
 import { useRef, useEffect, useState } from 'react';
-import { CarStartSound, ClickSound, Speaker } from './soundDemo_scene';
+
 import {
   ObsticlesBouncing,
   ObsticlesHaha,
@@ -23,6 +23,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import Controlls from './controlls';
 import sadAudio from '../../public/sad.mp3';
+import carRunningAudio from '../../public/carRunning.mp3';
 
 // import * as THREE from 'three';
 
@@ -211,22 +212,44 @@ function Roads({ setVehicleRotation, vehicleRotation }) {
 
 function CarScene() {
   const [vehicleRotation, setVehicleRotation] = useState(0);
+
   const [vehicleStartSound, setVehicleStartSound] = useState(false);
   const [speedUp, setSpeedUp] = useState(false);
 
-  const { isGameStarted, audio, lives } = useSelector((state) => state.game);
+  const { isGameStarted, audio, lives, gyro } = useSelector(
+    (state) => state.game,
+  );
   const dispatch = useDispatch();
 
-  const playSadAudio = () => {
-    const sadAudioPlay = new Audio(sadAudio);
-    sadAudioPlay.play();
-  };
+  const sadAudioPlay = useRef(new Audio(sadAudio));
+  const audioCarRunning = useRef(new Audio(carRunningAudio));
 
   useEffect(() => {
-    if (lives <= 0) {
-      playSadAudio();
+    if (lives > 0 && audio) {
+      audioCarRunning.current.loop = true;
+      audioCarRunning.current.play();
+    } else if (lives <= 0) {
+      audioCarRunning.current.pause();
+      audioCarRunning.current.currentTime = 0;
+      sadAudioPlay.current.play();
     }
-  }, [lives]);
+  }, [audio, lives]);
+
+  useEffect(() => {
+    const handleOrientation = (event) => {
+      const { gamma } = event; // Gamma represents left-to-right tilt
+      const rotationFactor = 0.05; // Adjust sensitivity
+      setVehicleRotation(gamma * rotationFactor);
+    };
+
+    if (gyro) {
+      window.addEventListener('deviceorientation', handleOrientation);
+    }
+
+    return () => {
+      window.removeEventListener('deviceorientation', handleOrientation);
+    };
+  }, [gyro]);
 
   return (
     <>
@@ -252,7 +275,6 @@ function CarScene() {
             vehicleRotation={vehicleRotation}
           />
           <VehicleOuter vehicleRotation={vehicleRotation} />
-          {/* <OrbitControls /> */}
           <Roads
             setVehicleRotation={setVehicleRotation}
             vehicleRotation={vehicleRotation}

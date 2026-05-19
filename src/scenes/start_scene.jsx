@@ -1,51 +1,115 @@
 import { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../redux/hooks';
-import { startGame, addScore, startAudio } from '../redux/features/gameSlice';
-import { CarStartSound } from './soundDemo_scene';
+import { startGame, startAudio, handleGyro } from '../redux/features/gameSlice';
 import carStartAudio from '../../public/carstart.mp3';
 import carRunningAudio from '../../public/carRunning.mp3';
 
 const StartScene = () => {
-  const [sound, setSound] = useState(false);
-  const { isGameStarted, score, audio } = useSelector((state) => state.game);
+  const { isGameStarted } = useSelector((state) => state.game);
+  const dispatch = useAppDispatch();
+  const audioCarStart = useRef(new Audio(carStartAudio));
+  const audioCarRunning = useRef(new Audio(carRunningAudio));
+  const runningAudioTimeout = useRef();
 
+  const [orientation, setOrientation] = useState(
+    window.screen.orientation.type,
+  );
+
+  useEffect(() => {
+    const handleOrientationChange = () =>
+      setOrientation(window.screen.orientation.type);
+    window.addEventListener('orientationchange', handleOrientationChange);
+    return () =>
+      window.removeEventListener('orientationchange', handleOrientationChange);
+  }, []);
+
+  const enableGyro = () => {
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission()
+        .then((permissionState) => {
+          if (permissionState === 'granted') {
+            dispatch(handleGyro(true));
+          }
+        })
+        .catch(console.error);
+    } else {
+      // For browsers that don't require permission
+      dispatch(handleGyro(true));
+    }
+  };
   const playCarStartSound = () => {
-    const audioCarStart = new Audio(carStartAudio);
-    const audioCarRunning = new Audio(carRunningAudio);
+    stopCarStartSound();
 
-    audioCarStart.play();
-    setTimeout(() => {
-      audioCarRunning.play();
-      audioCarRunning.loop = true;
+    audioCarStart.current.play();
+    runningAudioTimeout.current = setTimeout(() => {
+      audioCarRunning.current.loop = true;
+      audioCarRunning.current.play();
     }, 2000);
   };
 
-  const dispatch = useAppDispatch();
+  const stopCarStartSound = () => {
+    clearTimeout(runningAudioTimeout.current);
+
+    audioCarStart.current.pause();
+    audioCarStart.current.currentTime = 0;
+
+    audioCarRunning.current.pause();
+    audioCarRunning.current.currentTime = 0;
+  };
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(runningAudioTimeout.current);
+      audioCarStart.current.pause();
+      audioCarStart.current.currentTime = 0;
+      audioCarRunning.current.pause();
+      audioCarRunning.current.currentTime = 0;
+    };
+  }, []);
 
   return (
-    <div
-      className={`${isGameStarted ? 'start-screen-off' : 'start-screen'}`}
-      // style={{ display:  }}
-    >
+    <div className={isGameStarted ? 'start-screen-off' : 'start-screen'}>
       <div className="start-screen-content">
-        <div
+        <button
+          className="restart-btn"
           onClick={() => {
             dispatch(startAudio(true));
             playCarStartSound();
           }}
         >
-          {' '}
-          sound on {`(recommended)`}
-        </div>
-        <div onClick={() => dispatch(startAudio(false))}>sound off</div>
-        <div
+          <h2>sound on {`(recommended)`}</h2>
+        </button>
+        {orientation === 'landscape-primary' ? (
+          <>
+            <button onClick={enableGyro} className="restart-btn">
+              <h2>enable gyro</h2>
+            </button>
+          </>
+        ) : (
+          <>
+            {/* <button onClick={enableGyro} className="restart-btn"> */}
+            <h2> please rotate device </h2>
+            {/* </button> */}
+          </>
+        )}
+        <button
+          className="restart-btn"
+          onClick={() => {
+            dispatch(startAudio(false));
+            stopCarStartSound();
+          }}
+        >
+          <h2>sound off</h2>
+        </button>
+        <button
+          className="restart-btn"
           onClick={() => {
             dispatch(startGame());
           }}
         >
-          start game
-        </div>
+          <h2>start game</h2>
+        </button>
       </div>
     </div>
   );
