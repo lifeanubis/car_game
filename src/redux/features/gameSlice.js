@@ -18,7 +18,6 @@ const gameSlice = createSlice({
       state.isGameOver = false;
       state.score = 0;
       state.lives = 30;
-      state.gyro = false;
     },
     addScore: (state, action) => {
       state.score += action.payload ?? 1;

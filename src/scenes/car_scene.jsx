@@ -1,17 +1,14 @@
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { Physics, useSphere } from '@react-three/cannon';
 
 import {
-  OrbitControls,
   useKeyboardControls,
   KeyboardControls,
   useTexture,
   useGLTF,
-  PositionalAudio,
-  CameraShake,
-  Loader,
 } from '@react-three/drei';
 import gsap from 'gsap';
+import { DeviceOrientationControls } from '@react-three/drei';
 // import './ App.css';
 import { useRef, useEffect, useState } from 'react';
 
@@ -20,15 +17,14 @@ import {
   ObsticlesHaha,
   ObsticlesTruck,
 } from './obsticles_scene';
-import { useDispatch, useSelector } from 'react-redux';
-import Controlls from './controlls';
+import { useSelector } from 'react-redux';
 import sadAudio from '../../public/sad.mp3';
 import carRunningAudio from '../../public/carRunning.mp3';
 
 // import * as THREE from 'three';
 
 function Vehicle({ vehicleRotation = 0 }) {
-  const { scene, nodes, materials } = useGLTF('/rubicon/scene.gltf');
+  const { scene } = useGLTF('/rubicon/scene.gltf');
   const { camera } = useThree();
 
   const vehicleXPosition = vehicleRotation * 50 + 0.15;
@@ -88,25 +84,18 @@ function VehicleOuter({ vehicleRotation }) {
 
 // obsticles
 
-function RoadSegment({
-  initialZ,
-  textureRoad,
-  myMesh,
-  setVehicleRotation,
-  speedUp,
-  setSpeedUp,
-}) {
+function RoadSegment({ initialZ, textureRoad, myMesh, setVehicleRotation }) {
   const rotationFactor = 0.1;
   const vehicleSpeed = 1;
   const rotationState = useRef({ y: 0 });
   const prevKeysRef = useRef({ ArrowLeft: false, ArrowRight: false });
 
-  const [subscribed, getKeys] = useKeyboardControls();
+  const [, getKeys] = useKeyboardControls();
 
   useFrame(() => {
     // Update camera position to follow vehicle
 
-    const { ArrowLeft, ArrowRight, ArrowUp, ArrowDown } = getKeys();
+    const { ArrowLeft, ArrowRight, ArrowUp } = getKeys();
     if (myMesh) {
       myMesh.current.position.z += vehicleSpeed;
       // myMesh.current.rotation.y = rotationSpeedR;
@@ -180,7 +169,7 @@ function RoadSegment({
   );
 }
 
-function Roads({ setVehicleRotation, vehicleRotation }) {
+function Roads({ setVehicleRotation }) {
   const roadMeshOne = useRef();
   const roadMeshTwo = useRef();
 
@@ -196,14 +185,12 @@ function Roads({ setVehicleRotation, vehicleRotation }) {
         textureRoad={textureRoad}
         myMesh={roadMeshOne}
         setVehicleRotation={setVehicleRotation}
-        vehicleRotation={vehicleRotation}
       />
       <RoadSegment
         initialZ={-50}
         textureRoad={textureRoad}
         myMesh={roadMeshTwo}
         setVehicleRotation={setVehicleRotation}
-        vehicleRotation={vehicleRotation}
       />
       {/* <RoadSegment initialZ={-50} textureRoad={textureRoad} /> */}
     </>
@@ -213,13 +200,7 @@ function Roads({ setVehicleRotation, vehicleRotation }) {
 function CarScene() {
   const [vehicleRotation, setVehicleRotation] = useState(0);
 
-  const [vehicleStartSound, setVehicleStartSound] = useState(false);
-  const [speedUp, setSpeedUp] = useState(false);
-
-  const { isGameStarted, audio, lives, gyro } = useSelector(
-    (state) => state.game,
-  );
-  const dispatch = useDispatch();
+  const { audio, lives, gyro } = useSelector((state) => state.game);
 
   const sadAudioPlay = useRef(new Audio(sadAudio));
   const audioCarRunning = useRef(new Audio(carRunningAudio));
@@ -232,18 +213,35 @@ function CarScene() {
       audioCarRunning.current.pause();
       audioCarRunning.current.currentTime = 0;
       sadAudioPlay.current.play();
+    } else {
+      audioCarRunning.current.pause();
+      audioCarRunning.current.currentTime = 0;
     }
   }, [audio, lives]);
 
   useEffect(() => {
     const handleOrientation = (event) => {
-      const { gamma } = event; // Gamma represents left-to-right tilt
-      const rotationFactor = 0.05; // Adjust sensitivity
-      setVehicleRotation(gamma * rotationFactor);
+      const orientationType = window.screen.orientation?.type ?? '';
+      const rawTilt = orientationType.includes('landscape')
+        ? event.beta
+        : event.gamma;
+
+      if (rawTilt == null) return;
+
+      const tiltDirection = orientationType === 'landscape-secondary' ? -1 : 1;
+      const rotationFactor = 25;
+      const nextRotation = Math.max(
+        -0.05,
+        Math.min(0.05, rawTilt * tiltDirection * rotationFactor),
+      );
+
+      setVehicleRotation(nextRotation);
     };
 
     if (gyro) {
       window.addEventListener('deviceorientation', handleOrientation);
+    } else {
+      window.removeEventListener('deviceorientation', handleOrientation);
     }
 
     return () => {
@@ -269,11 +267,7 @@ function CarScene() {
               <ObsticlesBouncing />
             </>
           )}
-          <Vehicle
-            vehicleStartSound={vehicleStartSound}
-            setVehicleStartSound={setVehicleStartSound}
-            vehicleRotation={vehicleRotation}
-          />
+          <Vehicle vehicleRotation={vehicleRotation} />
           <VehicleOuter vehicleRotation={vehicleRotation} />
           <Roads
             setVehicleRotation={setVehicleRotation}

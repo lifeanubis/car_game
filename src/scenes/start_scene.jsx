@@ -13,19 +13,22 @@ const StartScene = () => {
   const runningAudioTimeout = useRef();
 
   const [orientation, setOrientation] = useState(
-    window.screen.orientation.type,
+    window.screen.orientation?.type ?? '',
   );
 
   useEffect(() => {
     const handleOrientationChange = () =>
-      setOrientation(window.screen.orientation.type);
+      setOrientation(window.screen.orientation?.type ?? '');
     window.addEventListener('orientationchange', handleOrientationChange);
     return () =>
       window.removeEventListener('orientationchange', handleOrientationChange);
   }, []);
 
   const enableGyro = () => {
-    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+    if (
+      typeof DeviceOrientationEvent !== 'undefined' &&
+      typeof DeviceOrientationEvent.requestPermission === 'function'
+    ) {
       DeviceOrientationEvent.requestPermission()
         .then((permissionState) => {
           if (permissionState === 'granted') {
@@ -80,19 +83,10 @@ const StartScene = () => {
         >
           <h2>sound on {`(recommended)`}</h2>
         </button>
-        {orientation === 'landscape-primary' ? (
-          <>
-            <button onClick={enableGyro} className="restart-btn">
-              <h2>enable gyro</h2>
-            </button>
-          </>
-        ) : (
-          <>
-            {/* <button onClick={enableGyro} className="restart-btn"> */}
-            <h2> please rotate device </h2>
-            {/* </button> */}
-          </>
-        )}
+        <button onClick={enableGyro} className="restart-btn">
+          <h2>enable gyro</h2>
+        </button>
+        {!orientation.includes('landscape') && <h2> please rotate device </h2>}
         <button
           className="restart-btn"
           onClick={() => {
