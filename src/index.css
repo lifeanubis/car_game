@@ -131,6 +131,41 @@ code {
   transform: rotate(360deg);
 }
 
+.game-info {
+  display: flex;
+  position: absolute;
+  flex-direction: column;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  top: 10%;
+  right: 0;
+  align-content: center;
+}
+
+.game-over {
+  opacity: 1;
+  transition: all 1s ease;
+}
+
+.game-on {
+  opacity: 0;
+}
+
+.restart-btn {
+  opacity: 1;
+  transition: all 1s ease;
+  align-self: center;
+  padding: 0.7rem;
+  margin: 0.5rem;
+  border-radius: 0.8rem;
+  border-color: #aa3bff;
+  cursor: pointer;
+}
+.restart-btn-off {
+  opacity: 0;
+}
+
 .scroll-info {
   background-color: #c0e8f8;
   position: absolute;
