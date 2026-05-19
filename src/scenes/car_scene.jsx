@@ -229,10 +229,10 @@ function CarScene() {
       if (rawTilt == null) return;
 
       const tiltDirection = orientationType === 'landscape-secondary' ? -1 : 1;
-      const rotationFactor = 25;
+      const rotationFactor = 2.5;
       const nextRotation = Math.max(
-        -0.5,
-        Math.min(0.5, rawTilt * tiltDirection * rotationFactor),
+        -0.07,
+        Math.min(0.07, rawTilt * tiltDirection * rotationFactor * 5),
       );
 
       setVehicleRotation(nextRotation);
